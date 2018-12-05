@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="822.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fxstudy.controlller.TrainTableController">
+   <children>
+            <TableView fx:id="train_table" layoutY="202.0" prefHeight="620.0">
+              <columns>
+                  <TableColumn fx:id="col_station_train_code" prefWidth="75.0" text="车次" />
+                  <TableColumn fx:id="col_from_station_name" prefWidth="75.0" text="出发站" />
+                  <TableColumn fx:id="col_to_station_name" prefWidth="75.0" text="到达站" />
+                  <TableColumn fx:id="col_start_time" prefWidth="75.0" text="出发时间" />
+                  <TableColumn fx:id="col_arrive_time" prefWidth="75.0" text="到达时间" />
+                  <TableColumn fx:id="col_lishi" prefWidth="75.0" text="历时" />
+                  <TableColumn fx:id="col_swz_num" prefWidth="75.0" text="特等座" />
+                  <TableColumn fx:id="col_tz_num" prefWidth="75.0" text="商务座/特等座" />
+                  <TableColumn fx:id="col_zy_num" prefWidth="75.0" text="一等座" />
+                  <TableColumn fx:id="col_ze_num" prefWidth="75.0" text="二等座" />
+                  <TableColumn fx:id="col_gr_num" prefWidth="75.0" text="高级软卧" />
+                  <TableColumn fx:id="col_rw_num" prefWidth="75.0" text="软卧" />
+                  <TableColumn fx:id="col_srrb_num" prefWidth="75.0" text="动卧" />
+                  <TableColumn fx:id="col_yw_num" prefWidth="75.0" text="硬卧" />
+                  <TableColumn fx:id="col_rz_num" prefWidth="75.0" text="软座" />
+                  <TableColumn fx:id="col_yz_num" prefWidth="75.0" text="硬座" />
+                  <TableColumn fx:id="col_wz_num" prefWidth="75.0" text="无座" />
+                  <TableColumn fx:id="col_qt_num" prefWidth="75.0" text="其他" />
+                  <TableColumn fx:id="col_btn" prefWidth="75.0" text="备注" />
+              </columns>
+         <padding>
+            <Insets bottom="12.0" right="12.0" />
+         </padding>
+            </TableView>
+      <TextField fx:id="start" layoutX="67.0" layoutY="73.0" text="长沙" />
+      <TextField fx:id="end" layoutX="316.0" layoutY="73.0" text="广州" />
+      <DatePicker fx:id="datePicker" layoutX="577.0" layoutY="73.0" promptText="yyyy-MM-dd" showWeekNumbers="true" />
+      <Button fx:id="query" layoutX="996.0" layoutY="73.0" mnemonicParsing="false" onAction="#quertTicket" text="查询" />
+      <Label layoutX="21.0" layoutY="77.0" text="出发地" />
+      <Label layoutX="256.0" layoutY="77.0" text="目的地" />
+      <Label layoutX="507.0" layoutY="77.0" text="出发日" />
+      <Button fx:id="checkU" layoutX="1072.0" layoutY="73.0" mnemonicParsing="false" text="check" />
+      <Button fx:id="closeBtn" layoutX="1140.0" layoutY="73.0" mnemonicParsing="false" onAction="#close" text="关闭" />
+      <Button layoutX="996.0" layoutY="116.0" mnemonicParsing="false" text="登录" fx:id="loginBtn" onAction="#showLogin"/>
+   </children>
+</Pane>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fxstudy.controlller.PassengerController">
+   <children>
+      <TableView fx:id="bookingPassengerTableView" layoutX="14.0" layoutY="186.0" prefHeight="200.0" prefWidth="576.0">
+        <columns>
+          <TableColumn fx:id="col_passenger_type_name" prefWidth="75.0" text="票种" />
+            <TableColumn fx:id="col_seatType_name" prefWidth="75.0" text="席别" />
+            <TableColumn fx:id="col_passenger_name" prefWidth="75.0" text="姓名" />
+            <TableColumn fx:id="col_passenger_id_type_name" prefWidth="75.0" text="证件类型" />
+            <TableColumn fx:id="col_passenger_id_no" prefWidth="75.0" text="证件号码" />
+          <TableColumn fx:id="col_mobile_no" prefWidth="75.0" text="手机号码" />
+        </columns>
+      </TableView>
+      <Button fx:id="checkUs" layoutX="475.0" layoutY="117.0" mnemonicParsing="false" text="确认" onAction="#submit"/>
+      <FlowPane fx:id="checkPane" layoutX="14.0" layoutY="17.0" prefHeight="147.0" prefWidth="444.0" />
+   </children>
+</Pane>

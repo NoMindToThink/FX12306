@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fxstudy.controlller.LoginController">
+   <children>
+      <Button fx:id="refreshCap" layoutX="530.0" layoutY="150.0" mnemonicParsing="false" onAction="#refreshCaptchBtn" text="刷新" />
+      <ImageView fx:id="capPic" fitHeight="387.0" fitWidth="577.0" layoutX="14.0" layoutY="233.0" pickOnBounds="true" preserveRatio="true">
+      </ImageView>
+      <Button layoutX="529.0" layoutY="177.0" mnemonicParsing="false" onAction="#submit" text="提交" />
+      <Button layoutX="529.0" layoutY="200.0" mnemonicParsing="false" onAction="#close" text="关闭" />
+
+      <CheckBox fx:id="ch1" layoutX="25.0" layoutY="314.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch2" layoutX="169.0" layoutY="314.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch3" layoutX="310.0" layoutY="314.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch4" layoutX="444.0" layoutY="314.0" mnemonicParsing="false" />
+
+      <CheckBox fx:id="ch5" layoutX="25.0" layoutY="458.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch6" layoutX="169.0" layoutY="458.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch7" layoutX="310.0" layoutY="458.0" mnemonicParsing="false" />
+      <CheckBox fx:id="ch8" layoutX="453.0" layoutY="458.0" mnemonicParsing="false" />
+      <TextField fx:id="t_username" layoutX="180.0" layoutY="84.0" text="" />
+      <PasswordField fx:id="t_password" layoutX="180.0" layoutY="117.0" text="" />
+      <Label layoutX="119.0" layoutY="88.0" text="账号：" />
+      <Label layoutX="119.0" layoutY="121.0" text="密码：" />
+
+
+   </children>
+</Pane>
