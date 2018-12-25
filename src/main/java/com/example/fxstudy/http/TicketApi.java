@@ -51,7 +51,7 @@ public interface TicketApi {
      * @param req
      * @return
      */
-    @GET("/otn/leftTicket/query")
+    @GET("/otn/leftTicket/queryX")
     public Call<String> queryTicket(@QueryMap Map<String,String> req);
 
     /**
