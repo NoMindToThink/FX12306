@@ -146,6 +146,11 @@ public class TrainTableController implements Initializable {
         //地名初始化
         TicketInfoContain.initStation();
         logger.info("地名已成功初始化"+TicketInfoContain.STATIONS.size()+"条记录！");
+        try {
+            TicketServer.getQueryUrl();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void relativePro(){
         col_station_train_code.setCellValueFactory(new PropertyValueFactory("station_train_code"));

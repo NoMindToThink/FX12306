@@ -23,6 +23,7 @@ public class TicketInfoContain {
     public static String LEFTTICKETSTR = "";
     public static String KEY_CHECK_ISCHANGE = "";
     public static final String API_URL = "https://kyfw.12306.cn/";
+    public static String CLeftTicketUrl = "";
     public static final String LOGIN_SITE="E";
     public static final String MODULE="login";
     public static final String RAND = "sjrand";
@@ -170,5 +171,13 @@ public class TicketInfoContain {
 
     public static void setPassengers(Passengers passengers) {
         TicketInfoContain.passengers = passengers;
+    }
+
+    public static String getCLeftTicketUrl() {
+        return CLeftTicketUrl;
+    }
+
+    public static void setCLeftTicketUrl(String CLeftTicketUrl) {
+        TicketInfoContain.CLeftTicketUrl = CLeftTicketUrl;
     }
 }

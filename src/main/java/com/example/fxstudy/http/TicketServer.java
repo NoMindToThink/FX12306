@@ -116,11 +116,26 @@ public class TicketServer {
         List<QueryInfo> lq = new ArrayList<>();
         Map<String,String> req = TicketReqUtil.getQueryTicketReq(train_date,from_station,to_station,purpose_codes);
         logger.info("query req:"+req);
-        Call<String> call = api.queryTicket(req);
+        Call<String> call = api.queryTicket(TicketInfoContain.getCLeftTicketUrl(),req);
         Response<String> resp = call.execute();
         logger.info(resp.body());
-        lq=TicketRespUtil.getQueryTicket(resp.body());
+        try {
+            lq=TicketRespUtil.getQueryTicket(resp.body());
+        }
+        catch (Exception e){
+            //如果报异常，首先刷新请求Url
+            getQueryUrl();
+            logger.debug(e.toString());
+        }
+
         return lq;
+    }
+    public static void getQueryUrl() throws IOException {
+        Call<String> call = api.getQueryUrl();
+        Response<String> resp = call.execute();
+        String url =TicketRespUtil.getJsValue(resp.body(),"CLeftTicketUrl",1);
+        logger.info(url);
+        TicketInfoContain.setCLeftTicketUrl("/otn/"+url);
     }
     public static void checkRespCode(JSONObject jsonObject,String key,String correct) throws TicketException {
         if (!jsonObject.get(key).equals(correct)){

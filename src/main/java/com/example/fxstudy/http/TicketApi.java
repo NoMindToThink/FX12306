@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 import java.util.Map;
 
@@ -51,8 +52,18 @@ public interface TicketApi {
      * @param req
      * @return
      */
+    /*
+    第一个方法的请求连接会不定时的改变，需要不停修改代码，不建议使用，建议第二种.
+     */
+    @Deprecated
     @GET("/otn/leftTicket/queryX")
     public Call<String> queryTicket(@QueryMap Map<String,String> req);
+
+    @GET
+    public Call<String> queryTicket(@Url String url, @QueryMap Map<String,String> req);
+
+    @GET("/otn/leftTicket/init")
+    public Call<String> getQueryUrl();
 
     /**
      * 订票时检测用户是否登录
