@@ -6,6 +6,7 @@ import com.example.fxstudy.entity.*;
 import com.example.fxstudy.exception.TicketException;
 import com.example.fxstudy.util.TicketReqUtil;
 import com.example.fxstudy.util.TicketRespUtil;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -17,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -245,5 +247,60 @@ public class TicketServer {
         TicketInfoContain.setPassengers(passengers);
         logger.info("getPassengerRes:"+passengers.getData().getNormal_passengers());
         return passengers.getData().getNormal_passengers();
+    }
+    public static void grabTicket(List<String> passengers,List<String> seatTypes,List<String> trainIds,String start,String end,String trainDate,String purpose_codes){
+        try {
+            //根据姓名查找订票人信息
+            List<BookingPassenger> list = new ArrayList<>();
+            for (Passengers.DataBean.NormalPassengersBean np :TicketInfoContain.allNormalPassengersBeans){
+                if(passengers.contains(np.getPassenger_name())){
+                    list.add(np);
+                }
+            }
+            //查票
+            List<QueryInfo> quertTicket = quertTicket(trainDate,start,end,purpose_codes);
+            //循环查询结果,如果匹配需要抢的车次，进入
+            for (QueryInfo qi:quertTicket){
+                if(trainIds.contains(qi.getQueryLeftNewDTO().station_train_code)){
+                    for (String seatType:seatTypes){
+                        int grabFlag = -1;
+                        //检查是否有剩余票数
+                        switch (seatType){
+                            case "1": if(canBook(qi.getQueryLeftNewDTO().getYz_num())){grabFlag=1;};break;
+                            case "2": if(canBook(qi.getQueryLeftNewDTO().getRz_num())){grabFlag=2;};break;
+                            case "3": if(canBook(qi.getQueryLeftNewDTO().getYw_num())){grabFlag=3;};break;
+                            case "4": if(canBook(qi.getQueryLeftNewDTO().getRw_num())){grabFlag=4;};break;
+                            case "O": if(canBook(qi.getQueryLeftNewDTO().getZe_num())){grabFlag=5;};break;
+                            case "M": if(canBook(qi.getQueryLeftNewDTO().getZy_num())){grabFlag=6;};break;
+                            case "9": if(canBook(qi.getQueryLeftNewDTO().getTz_num())){grabFlag=7;};break;
+                            default: break;
+                        }
+                        if(grabFlag>0){
+                            //创建订票所需信息
+                            BookTicketInfo bookTicketInfo = new BookTicketInfo();
+                            bookTicketInfo.setSecretStr(qi.getSecretStr());
+                            bookTicketInfo.setBack_train_date(trainDate);
+                            bookTicketInfo.setTrain_date(trainDate);
+                            bookTicketInfo.setTour_flag("dc");
+                            bookTicketInfo.setPurpose_codes("ADULT");
+                            bookTicketInfo.setQuery_from_station_name(qi.getQueryLeftNewDTO().from_station_name);
+                            bookTicketInfo.setQuery_to_station_name(qi.getQueryLeftNewDTO().to_station_name);
+                            logger.info(qi.getQueryLeftNewDTO().getStation_train_code());
+
+                            submitOrder(list,TicketInfoContain.getQueryLeftNewDTO());
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static boolean canBook(String s){
+        if(s.equals("--")||s.equals("无")){
+            return false;
+        }else {
+            return true;
+        }
     }
 }

@@ -277,6 +277,7 @@ public class TrainTableController implements Initializable {
             List<Passengers.DataBean.NormalPassengersBean> passengers = TicketServer.getPassenger();
             for (Passengers.DataBean.NormalPassengersBean np:passengers){
                 passengerBox.setSpacing(2);
+                TicketInfoContain.allNormalPassengersBeans.add(np);
                 passengerBox.getChildren().add(new CheckBox(np.getPassenger_name()));
             }
         } catch (IOException e) {
@@ -302,7 +303,17 @@ public class TrainTableController implements Initializable {
 
     public void grabTicket(ActionEvent actionEvent) {
         List<String> nps = getPassengers();
-        System.out.println(nps);
+        logger.info(nps.toString());
+        List<String> seats = getSeatType();
+        logger.info(seats.toString());
+        List<String> trains = getTrainId();
+        logger.info(trains.toString());
+
+        String start_code = TicketInfoContain.STATIONS.get(start.getText()).getCode();
+        String end_code = TicketInfoContain.STATIONS.get(end.getText()).getCode();
+        String date = datePicker.getValue().toString();
+        String purpose_codes = "ADULT";
+        TicketServer.grabTicket(nps,seats,trains,start_code,end_code,date,purpose_codes);
 
     }
     public List<String> getPassengers(){
@@ -313,6 +324,26 @@ public class TrainTableController implements Initializable {
             if(npc.isSelected()){
                 pnames.add(npc.getText());
             }
+        }
+        return pnames;
+    }
+    public List<String> getSeatType(){
+        Iterator<Node> iterator = seatTypeBox.getChildren().iterator();
+        List<String> pnames = new ArrayList<>();
+        while(iterator.hasNext()){
+            CheckBox npc = (CheckBox) iterator.next();
+            if(npc.isSelected()){
+                pnames.add(npc.getText());
+            }
+        }
+        return pnames;
+    }
+    public List<String> getTrainId(){
+        Iterator<Node> iterator = trainIdBox.getChildren().iterator();
+        List<String> pnames = new ArrayList<>();
+        while(iterator.hasNext()){
+            Button npc = (Button) iterator.next();
+                pnames.add(npc.getText());
         }
         return pnames;
     }
