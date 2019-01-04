@@ -77,6 +77,8 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //存储控制器
+        TrainTableController.controllerContain.put("login",this);
         chMap.put("ch1",ch1);
         chMap.put("ch2",ch2);
         chMap.put("ch3",ch3);
@@ -96,11 +98,13 @@ public class LoginController implements Initializable {
     }
 
     public void submit(ActionEvent actionEvent) {
+        TrainTableController train = (TrainTableController) TrainTableController.controllerContain.get("train");
         try {
             String ans = checkCapAll();
             JSONObject jsonObject = TicketServer.login(t_username.getText(), t_password.getText(), ans);
             Alert loginSuc = new Alert(Alert.AlertType.INFORMATION,jsonObject.getString("result_message"));
             loginSuc.showAndWait();
+            train.showPassengerNew();
             close(actionEvent);
         } catch (IOException e) {
             e.printStackTrace();

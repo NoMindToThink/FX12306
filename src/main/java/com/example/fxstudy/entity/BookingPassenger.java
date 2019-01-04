@@ -9,6 +9,15 @@ import java.util.Objects;
 public class BookingPassenger {
     private String passenger_type_name;
     private String passenger_type;
+/*
+    9 -- 商务座
+    M -- 一等座
+    O -- 二等座
+    1 -- 硬座
+    2 -- 软座
+    3 -- 硬卧
+    4 -- 软卧
+ */
     private String seatType;
     private String seatType_name;
     private String passenger_name;

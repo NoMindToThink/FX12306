@@ -29,6 +29,7 @@ public class TicketInfoContain {
     public static final String RAND = "sjrand";
     public static final String APPID= "otn";
 
+    public static Map<String, String> SEATTYPES = new HashMap<>();
     public static HashMap<String,String> captchReq = new HashMap<>();
     public static HashMap<String,String> captchResp = new HashMap<>();
     public static HashMap<String,String> loginReq = new HashMap<>();
@@ -179,5 +180,15 @@ public class TicketInfoContain {
 
     public static void setCLeftTicketUrl(String CLeftTicketUrl) {
         TicketInfoContain.CLeftTicketUrl = CLeftTicketUrl;
+    }
+
+    public static void initSeatType() {
+        SEATTYPES.put("硬座","1");
+        SEATTYPES.put("软座","2");
+        SEATTYPES.put("硬卧","3");
+        SEATTYPES.put("软卧","4");
+        SEATTYPES.put("二等座","O");
+        SEATTYPES.put("一等座","M");
+        SEATTYPES.put("商务座","9");
     }
 }

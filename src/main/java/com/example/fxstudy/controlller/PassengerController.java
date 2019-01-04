@@ -55,6 +55,8 @@ public class PassengerController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //存储控制器
+        TrainTableController.controllerContain.put("passenger",this);
         relativePro();
         List<Passengers.DataBean.NormalPassengersBean> lp = TicketInfoContain.getPassengers().getData().getNormal_passengers();
         for (Passengers.DataBean.NormalPassengersBean p:lp){

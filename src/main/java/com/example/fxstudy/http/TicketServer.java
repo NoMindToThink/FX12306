@@ -220,4 +220,30 @@ public class TicketServer {
         logger.info("confirm resp:"+resp2.body());
 
     }
+    public static List<Passengers.DataBean.NormalPassengersBean> getPassenger() throws IOException {
+        Map<String,String> req2 = TicketReqUtil.getIniDc();
+        Call<String> call2 = api.initDc(req2);
+        Response<String> resp2 = call2.execute();
+        logger.info("iniDc req:"+req2);
+        logger.info("iniDc resp:"+resp2.body());
+        String globalRepeatSubmitToken = TicketRespUtil.getJsValue(resp2.body(), "globalRepeatSubmitToken",1);
+        String leftTicket = TicketRespUtil.getJsValue(resp2.body(),"leftTicketStr",2);
+        String key_check_isChange = TicketRespUtil.getJsValue(resp2.body(),"key_check_isChange",2);
+        TicketInfoContain.setRepeatSubmitToken(globalRepeatSubmitToken);
+        TicketInfoContain.setLEFTTICKETSTR(leftTicket);
+        TicketInfoContain.setKeyCheckIschange(key_check_isChange);
+        logger.info("RepeatSubmitToken:"+globalRepeatSubmitToken);
+        logger.info("leftTicket:"+leftTicket);
+        logger.info("key_check_isChange:"+key_check_isChange);
+
+        Map<String,String> req3 = TicketReqUtil.getPassengerDTOsReq(globalRepeatSubmitToken);
+        Call<String> call3 = api.getPassengerDTOs(req3);
+        Response<String> resp3 = call3.execute();
+        logger.info("passenger req:"+req3);
+        logger.info("passenger resp:"+resp3.body());
+        Passengers passengers = JSON.parseObject(resp3.body(),Passengers.class);
+        TicketInfoContain.setPassengers(passengers);
+        logger.info("getPassengerRes:"+passengers.getData().getNormal_passengers());
+        return passengers.getData().getNormal_passengers();
+    }
 }

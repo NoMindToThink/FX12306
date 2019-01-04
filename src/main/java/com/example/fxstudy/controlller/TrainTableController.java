@@ -2,6 +2,7 @@ package com.example.fxstudy.controlller;
 
 import com.example.fxstudy.FxstudyApplication;
 import com.example.fxstudy.entity.BookTicketInfo;
+import com.example.fxstudy.entity.Passengers;
 import com.example.fxstudy.entity.QueryInfo;
 import com.example.fxstudy.entity.QueryLeftNewDTO;
 import com.example.fxstudy.exception.TicketException;
@@ -15,9 +16,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -25,10 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created with IDEA
@@ -44,6 +44,14 @@ public class TrainTableController implements Initializable {
     public Button closeBtn;
     @FXML
     public Button loginBtn;
+    @FXML
+    public VBox passengerBox;
+    @FXML
+    public VBox trainIdBox;
+    @FXML
+    public VBox seatTypeBox;
+    @FXML
+    public Button grabTicket;
     @FXML
     private TableView train_table;
     @FXML
@@ -85,6 +93,8 @@ public class TrainTableController implements Initializable {
     @FXML
     private TableColumn col_btn;
     @FXML
+    private TableColumn col_btn2;
+    @FXML
     private Button query;
     @FXML
     private TextField start;
@@ -94,6 +104,8 @@ public class TrainTableController implements Initializable {
     private DatePicker datePicker;
 
     public static Map<String, Stage> stagerContain = new HashMap<>();
+
+    public static Map<String, Object> controllerContain = new HashMap<>();
 
     public static List<QueryInfo> lq;
 
@@ -106,6 +118,7 @@ public class TrainTableController implements Initializable {
 
     public void showLogin() throws IOException {
         if(stagerContain.get("login")!=null){
+            stagerContain.get("login").show();
             return;
         }
         Stage stage = new Stage();
@@ -141,10 +154,15 @@ public class TrainTableController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //存储控制器
+        controllerContain.put("train",this);
         //表和属性关联
         relativePro();
         //地名初始化
         TicketInfoContain.initStation();
+        //载入座位类型
+        TicketInfoContain.initSeatType();
+        showSeatType();
         logger.info("地名已成功初始化"+TicketInfoContain.STATIONS.size()+"条记录！");
         try {
             TicketServer.getQueryUrl();
@@ -223,6 +241,79 @@ public class TrainTableController implements Initializable {
             };
             return cell;
         });
+
+        col_btn2.setCellFactory((col)->{
+            TableCell<QueryLeftNewDTO, Boolean> cell = new TableCell<QueryLeftNewDTO, Boolean>() {
+                @Override
+                public void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    this.setText(null);
+                    this.setGraphic(null);
+
+                    if (!empty) {
+                        Button button = new Button("预约");
+                        this.setGraphic(button);
+                        button.setOnMouseClicked((me)->{
+                            ObservableList<QueryLeftNewDTO> oq= this.getTableView().getItems();
+                            QueryLeftNewDTO q = oq.get(this.getIndex());
+                            Button e = new Button(q.getStation_train_code());
+                            e.setOnMouseClicked((ex)->{
+                                trainIdBox.getChildren().removeAll(e);
+                            });
+                            if(!trainIdBox.getChildren().contains(e)) {
+                                trainIdBox.getChildren().add(e);
+                            }
+                            logger.info("你预约了"+q.getStation_train_code()+"车次");
+                        });
+                    }
+                }
+
+            };
+            return cell;
+        });
+    }
+    public void showPassengerNew(){
+        try {
+            List<Passengers.DataBean.NormalPassengersBean> passengers = TicketServer.getPassenger();
+            for (Passengers.DataBean.NormalPassengersBean np:passengers){
+                passengerBox.setSpacing(2);
+                passengerBox.getChildren().add(new CheckBox(np.getPassenger_name()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /*
+    9 -- 商务座
+    M -- 一等座
+    O -- 二等座
+    1 -- 硬座
+    2 -- 软座
+    3 -- 硬卧
+    4 -- 软卧
+ */
+    public void showSeatType(){
+        Set<String> set = TicketInfoContain.SEATTYPES.keySet();
+        for (String s:set) {
+            seatTypeBox.setSpacing(2);
+            seatTypeBox.getChildren().add(new CheckBox(s));
+        }
     }
 
+    public void grabTicket(ActionEvent actionEvent) {
+        List<String> nps = getPassengers();
+        System.out.println(nps);
+
+    }
+    public List<String> getPassengers(){
+        Iterator<Node> iterator = passengerBox.getChildren().iterator();
+        List<String> pnames = new ArrayList<>();
+        while(iterator.hasNext()){
+            CheckBox npc = (CheckBox) iterator.next();
+            if(npc.isSelected()){
+                pnames.add(npc.getText());
+            }
+        }
+        return pnames;
+    }
 }

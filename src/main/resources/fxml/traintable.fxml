@@ -7,7 +7,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="822.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fxstudy.controlller.TrainTableController">
    <children>
-            <TableView fx:id="train_table" layoutY="202.0" prefHeight="620.0">
+            <TableView fx:id="train_table" layoutY="202.0" prefHeight="404.0" prefWidth="1437.0">
               <columns>
                   <TableColumn fx:id="col_station_train_code" prefWidth="75.0" text="车次" />
                   <TableColumn fx:id="col_from_station_name" prefWidth="75.0" text="出发站" />
@@ -28,6 +28,7 @@
                   <TableColumn fx:id="col_wz_num" prefWidth="75.0" text="无座" />
                   <TableColumn fx:id="col_qt_num" prefWidth="75.0" text="其他" />
                   <TableColumn fx:id="col_btn" prefWidth="75.0" text="备注" />
+                  <TableColumn fx:id="col_btn2" prefWidth="75.0" text="选择" />
               </columns>
          <padding>
             <Insets bottom="12.0" right="12.0" />
@@ -42,6 +43,10 @@
       <Label layoutX="507.0" layoutY="77.0" text="出发日" />
       <Button fx:id="checkU" layoutX="1072.0" layoutY="73.0" mnemonicParsing="false" text="check" />
       <Button fx:id="closeBtn" layoutX="1140.0" layoutY="73.0" mnemonicParsing="false" onAction="#close" text="关闭" />
-      <Button layoutX="996.0" layoutY="116.0" mnemonicParsing="false" text="登录" fx:id="loginBtn" onAction="#showLogin"/>
+      <Button fx:id="loginBtn" layoutX="996.0" layoutY="116.0" mnemonicParsing="false" onAction="#showLogin" text="登录" />
+      <VBox fx:id="passengerBox" layoutX="21.0" layoutY="606.0" prefHeight="200.0" prefWidth="100.0" />
+      <VBox fx:id="seatTypeBox" layoutX="206.0" layoutY="608.0" prefHeight="200.0" prefWidth="100.0" />
+      <VBox fx:id="trainIdBox" layoutX="369.0" layoutY="606.0" prefHeight="200.0" prefWidth="100.0" />
+      <Button fx:id="grabTicket" layoutX="1069.0" layoutY="116.0" mnemonicParsing="false" text="开抢" onAction="#grabTicket" />
    </children>
 </Pane>
