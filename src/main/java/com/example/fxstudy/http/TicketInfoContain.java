@@ -34,7 +34,6 @@ public class TicketInfoContain {
     public static HashMap<String,String> captchResp = new HashMap<>();
     public static HashMap<String,String> loginReq = new HashMap<>();
     public static Map<String, StationInfo> STATIONS = new HashMap<>();
-    public static List<Passengers.DataBean.NormalPassengersBean> allNormalPassengersBeans = new LinkedList<>();
     public static List<Passengers.DataBean.NormalPassengersBean> normalPassengersBeans = new LinkedList<>();
 
     public static String passengerTicketStr;

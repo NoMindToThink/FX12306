@@ -277,7 +277,7 @@ public class TrainTableController implements Initializable {
             List<Passengers.DataBean.NormalPassengersBean> passengers = TicketServer.getPassenger();
             for (Passengers.DataBean.NormalPassengersBean np:passengers){
                 passengerBox.setSpacing(2);
-                TicketInfoContain.allNormalPassengersBeans.add(np);
+                TicketInfoContain.normalPassengersBeans.add(np);
                 passengerBox.getChildren().add(new CheckBox(np.getPassenger_name()));
             }
         } catch (IOException e) {

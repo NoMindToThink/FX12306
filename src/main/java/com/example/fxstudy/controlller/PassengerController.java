@@ -63,7 +63,7 @@ public class PassengerController implements Initializable {
             CheckBox checkBox = new CheckBox(p.getPassenger_name());
             checkBox.setOnAction((actionEvent -> {
                 CheckBox target = (CheckBox) actionEvent.getTarget();
-                BookingPassenger bookingPassenger = new BookingPassenger(p);
+                BookingPassenger bookingPassenger = new BookingPassenger(p,"硬座");
                 if(target.isSelected()){
                     TicketInfoContain.normalPassengersBeans.add(p);
                     list.add(bookingPassenger);

@@ -252,11 +252,7 @@ public class TicketServer {
         try {
             //根据姓名查找订票人信息
             List<BookingPassenger> list = new ArrayList<>();
-            for (Passengers.DataBean.NormalPassengersBean np :TicketInfoContain.allNormalPassengersBeans){
-                if(passengers.contains(np.getPassenger_name())){
-                    list.add(np);
-                }
-            }
+
             //查票
             List<QueryInfo> quertTicket = quertTicket(trainDate,start,end,purpose_codes);
             //循环查询结果,如果匹配需要抢的车次，进入
@@ -266,13 +262,13 @@ public class TicketServer {
                         int grabFlag = -1;
                         //检查是否有剩余票数
                         switch (seatType){
-                            case "1": if(canBook(qi.getQueryLeftNewDTO().getYz_num())){grabFlag=1;};break;
-                            case "2": if(canBook(qi.getQueryLeftNewDTO().getRz_num())){grabFlag=2;};break;
-                            case "3": if(canBook(qi.getQueryLeftNewDTO().getYw_num())){grabFlag=3;};break;
-                            case "4": if(canBook(qi.getQueryLeftNewDTO().getRw_num())){grabFlag=4;};break;
-                            case "O": if(canBook(qi.getQueryLeftNewDTO().getZe_num())){grabFlag=5;};break;
-                            case "M": if(canBook(qi.getQueryLeftNewDTO().getZy_num())){grabFlag=6;};break;
-                            case "9": if(canBook(qi.getQueryLeftNewDTO().getTz_num())){grabFlag=7;};break;
+                            case "硬座": if(canBook(qi.getQueryLeftNewDTO().getYz_num())){grabFlag=1;};break;
+                            case "软座": if(canBook(qi.getQueryLeftNewDTO().getRz_num())){grabFlag=2;};break;
+                            case "硬卧": if(canBook(qi.getQueryLeftNewDTO().getYw_num())){grabFlag=3;};break;
+                            case "软卧": if(canBook(qi.getQueryLeftNewDTO().getRw_num())){grabFlag=4;};break;
+                            case "二等座": if(canBook(qi.getQueryLeftNewDTO().getZe_num())){grabFlag=5;};break;
+                            case "一等座": if(canBook(qi.getQueryLeftNewDTO().getZy_num())){grabFlag=6;};break;
+                            case "商务座": if(canBook(qi.getQueryLeftNewDTO().getTz_num())){grabFlag=7;};break;
                             default: break;
                         }
                         if(grabFlag>0){
@@ -286,13 +282,22 @@ public class TicketServer {
                             bookTicketInfo.setQuery_from_station_name(qi.getQueryLeftNewDTO().from_station_name);
                             bookTicketInfo.setQuery_to_station_name(qi.getQueryLeftNewDTO().to_station_name);
                             logger.info(qi.getQueryLeftNewDTO().getStation_train_code());
-
-                            submitOrder(list,TicketInfoContain.getQueryLeftNewDTO());
+                            for (Passengers.DataBean.NormalPassengersBean np :TicketInfoContain.normalPassengersBeans){
+                                if(passengers.contains(np.getPassenger_name())){
+                                    BookingPassenger bookingPassenger = new BookingPassenger(np,seatType);
+                                    list.add(bookingPassenger);
+                                }
+                            }
+                            TicketInfoContain.setQueryLeftNewDTO(qi.getQueryLeftNewDTO());
+                            bookingTicket(bookTicketInfo);
+                            submitOrder(list,qi.getQueryLeftNewDTO());
                         }
                     }
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TicketException e) {
             e.printStackTrace();
         }
     }

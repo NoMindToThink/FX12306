@@ -113,6 +113,7 @@ public class BookingPassenger {
         this.setPassenger_type("1");
         this.setPassenger_type_name("成人票");
     }
+    @Deprecated
     public BookingPassenger(Passengers.DataBean.NormalPassengersBean normalPassengersBean) {
         this();
         this.setPassenger_type(normalPassengersBean.getPassenger_type());
@@ -122,6 +123,21 @@ public class BookingPassenger {
         this.setPassenger_id_no(normalPassengersBean.getPassenger_id_no());
         this.setPhone_no(normalPassengersBean.getPhone_no());
         this.setMobile_no(normalPassengersBean.getMobile_no());
+    }
+    public BookingPassenger(Passengers.DataBean.NormalPassengersBean normalPassengersBean,String seatType_name) {
+        this(normalPassengersBean);
+        String seatTypeFlag = null;
+        switch (seatType_name){
+            case "硬座": seatTypeFlag="1";break;
+            case "软座": seatTypeFlag="2";break;
+            case "硬卧": seatTypeFlag="3";break;
+            case "软卧": seatTypeFlag="4";break;
+            case "二等座":seatTypeFlag="O";break;
+            case "一等座":seatTypeFlag="M";break;
+            case "商务座":seatTypeFlag="9";break;
+            default: break;
+        }
+        this.setSeatType(seatTypeFlag);
     }
 
     @Override
