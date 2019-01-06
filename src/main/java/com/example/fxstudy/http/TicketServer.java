@@ -202,7 +202,7 @@ public class TicketServer {
         }
         return false;
     }
-    public static void submitOrder(List<BookingPassenger> list, QueryLeftNewDTO queryLeftNewDTO) throws IOException {
+    public static String submitOrder(List<BookingPassenger> list, QueryLeftNewDTO queryLeftNewDTO) throws IOException {
         Map<String,String> req = TicketReqUtil.getcheckOrderInfoReq(list,TicketInfoContain.getRepeatSubmitToken());
         logger.info("checkOrderInfoReq:"+req.toString());
         Call<String> call = api.checkOrderInfo(req);
@@ -220,7 +220,7 @@ public class TicketServer {
         Call<String> call2 = api.confirmSingleForQueue(req2);
         Response<String> resp2 = call2.execute();
         logger.info("confirm resp:"+resp2.body());
-
+        return resp2.body();
     }
     public static List<Passengers.DataBean.NormalPassengersBean> getPassenger() throws IOException {
         Map<String,String> req2 = TicketReqUtil.getIniDc();
@@ -248,7 +248,7 @@ public class TicketServer {
         logger.info("getPassengerRes:"+passengers.getData().getNormal_passengers());
         return passengers.getData().getNormal_passengers();
     }
-    public static void grabTicket(List<String> passengers,List<String> seatTypes,List<String> trainIds,String start,String end,String trainDate,String purpose_codes){
+    public static String grabTicket(List<String> passengers,List<String> seatTypes,List<String> trainIds,String start,String end,String trainDate,String purpose_codes){
         try {
             //根据姓名查找订票人信息
             List<BookingPassenger> list = new ArrayList<>();
@@ -290,7 +290,8 @@ public class TicketServer {
                             }
                             TicketInfoContain.setQueryLeftNewDTO(qi.getQueryLeftNewDTO());
                             bookingTicket(bookTicketInfo);
-                            submitOrder(list,qi.getQueryLeftNewDTO());
+                            String s = submitOrder(list, qi.getQueryLeftNewDTO());
+                            return s;
                         }
                     }
                 }
@@ -299,7 +300,9 @@ public class TicketServer {
             e.printStackTrace();
         } catch (TicketException e) {
             e.printStackTrace();
+            return e.getMessage();
         }
+        return "-1";
     }
     public static boolean canBook(String s){
         if(s.equals("--")||s.equals("无")){

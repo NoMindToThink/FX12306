@@ -1,5 +1,9 @@
 package com.example.fxstudy.controlller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.example.fxstudy.FxstudyApplication;
 import com.example.fxstudy.entity.BookTicketInfo;
 import com.example.fxstudy.entity.Passengers;
@@ -275,6 +279,7 @@ public class TrainTableController implements Initializable {
     public void showPassengerNew(){
         try {
             List<Passengers.DataBean.NormalPassengersBean> passengers = TicketServer.getPassenger();
+            TicketInfoContain.normalPassengersBeans.clear();
             for (Passengers.DataBean.NormalPassengersBean np:passengers){
                 passengerBox.setSpacing(2);
                 TicketInfoContain.normalPassengersBeans.add(np);
@@ -313,7 +318,28 @@ public class TrainTableController implements Initializable {
         String end_code = TicketInfoContain.STATIONS.get(end.getText()).getCode();
         String date = datePicker.getValue().toString();
         String purpose_codes = "ADULT";
-        TicketServer.grabTicket(nps,seats,trains,start_code,end_code,date,purpose_codes);
+        String resp = TicketServer.grabTicket(nps, seats, trains, start_code, end_code, date, purpose_codes);
+        if(!resp.equals("-1")){
+            JSONObject respo =null;
+            try {
+                respo = JSON.parseObject(resp);
+                boolean flag = respo.getJSONObject("data").getString("submitStatus").equals("true");
+                JSONArray msg = respo.getJSONArray("messages");
+                if(flag){
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"抢票成功");
+                    alert.showAndWait();
+                }else {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,respo.getJSONArray("messages").get(0).toString());
+                    alert.showAndWait();
+                }
+            }catch (JSONException e){
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,resp);
+                alert.showAndWait();
+                e.printStackTrace();
+
+            }
+
+        }
 
     }
     public List<String> getPassengers(){
