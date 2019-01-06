@@ -306,7 +306,7 @@ public class TrainTableController implements Initializable {
         }
     }
 
-    public void grabTicket(ActionEvent actionEvent) {
+    public void grabTicket(ActionEvent actionEvent) throws InterruptedException {
         List<String> nps = getPassengers();
         logger.info(nps.toString());
         List<String> seats = getSeatType();
@@ -318,28 +318,42 @@ public class TrainTableController implements Initializable {
         String end_code = TicketInfoContain.STATIONS.get(end.getText()).getCode();
         String date = datePicker.getValue().toString();
         String purpose_codes = "ADULT";
-        String resp = TicketServer.grabTicket(nps, seats, trains, start_code, end_code, date, purpose_codes);
-        if(!resp.equals("-1")){
-            JSONObject respo =null;
-            try {
-                respo = JSON.parseObject(resp);
-                boolean flag = respo.getJSONObject("data").getString("submitStatus").equals("true");
-                JSONArray msg = respo.getJSONArray("messages");
-                if(flag){
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"抢票成功");
-                    alert.showAndWait();
-                }else {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION,respo.getJSONArray("messages").get(0).toString());
-                    alert.showAndWait();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean isGrab = false;
+                while(!isGrab) {
+                    String resp = TicketServer.grabTicket(nps, seats, trains, start_code, end_code, date, purpose_codes);
+                    if (!resp.equals("-1")) {
+                        JSONObject respo = null;
+                        try {
+                            respo = JSON.parseObject(resp);
+                            boolean flag = respo.getJSONObject("data").getString("submitStatus").equals("true");
+                            JSONArray msg = respo.getJSONArray("messages");
+                            if (flag) {
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "抢票成功");
+                                alert.showAndWait();
+                                isGrab=true;
+                            } else {
+//                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, respo.getJSONArray("messages").get(0).toString());
+//                        alert.showAndWait();
+                            }
+                        } catch (JSONException e) {
+//                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, resp);
+//                    alert.showAndWait();
+                            e.printStackTrace();
+                        }
+
+                    }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }catch (JSONException e){
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,resp);
-                alert.showAndWait();
-                e.printStackTrace();
-
             }
+        }).start();
 
-        }
 
     }
     public List<String> getPassengers(){
