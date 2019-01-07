@@ -17,6 +17,7 @@ import com.example.fxstudy.http.TicketServer;
 import com.example.fxstudy.springfx.AbstractFXView;
 import com.example.fxstudy.thread.GrabThread;
 import com.example.fxstudy.thread.MyThreadPool;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -324,7 +325,7 @@ public class TrainTableController implements Initializable {
         String end_code = TicketInfoContain.STATIONS.get(end.getText()).getCode();
         String date = datePicker.getValue().toString();
         String purpose_codes = "ADULT";
-        pool.execute(new GrabThread(nps, seats, trains, start_code, end_code, date, purpose_codes));
+        pool.execute(new GrabThread(nps, seats, trains, start_code, end_code, date, purpose_codes,this));
 
     }
     public List<String> getPassengers(){
@@ -362,5 +363,16 @@ public class TrainTableController implements Initializable {
     public void stopGrab(ActionEvent actionEvent) {
         logger.info("停止抢票");
         pool.shutdownNow();
+    }
+    public void showMsg(Alert.AlertType alertType,String msg){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                //更新JavaFX的主线程的代码放在此处
+                Alert alert = new Alert(alertType,msg);
+                alert.showAndWait();
+            }
+        });
+
     }
 }

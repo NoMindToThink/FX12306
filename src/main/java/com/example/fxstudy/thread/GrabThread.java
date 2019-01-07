@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.example.fxstudy.controlller.TrainTableController;
+import com.example.fxstudy.exception.TicketException;
 import com.example.fxstudy.http.TicketServer;
 import javafx.scene.control.Alert;
 
@@ -24,8 +26,9 @@ public class GrabThread extends Thread {
     private String end_code;
     private String date;
     private String purpose_codes;
+    private TrainTableController trainTableController;
 
-    public GrabThread(List<String> nps, List<String> seats, List<String> trains, String start_code, String end_code, String date, String purpose_codes) {
+    public GrabThread(List<String> nps, List<String> seats, List<String> trains, String start_code, String end_code, String date, String purpose_codes, TrainTableController trainTableController) {
         this.nps = nps;
         this.seats = seats;
         this.trains = trains;
@@ -33,6 +36,7 @@ public class GrabThread extends Thread {
         this.end_code = end_code;
         this.date = date;
         this.purpose_codes = purpose_codes;
+        this.trainTableController=trainTableController;
     }
 
 
@@ -48,9 +52,7 @@ public class GrabThread extends Thread {
                     boolean flag = respo.getJSONObject("data").getString("submitStatus").equals("true");
                     JSONArray msg = respo.getJSONArray("messages");
                     if (flag) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "抢票成功");
-                        alert.showAndWait();
-                        isGrab=true;
+                        throw new TicketException("抢票成功");
                     } else {
 //                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, respo.getJSONArray("messages").get(0).toString());
 //                        alert.showAndWait();
@@ -58,7 +60,11 @@ public class GrabThread extends Thread {
                 } catch (JSONException e) {
 //                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, resp);
 //                    alert.showAndWait();
+                    trainTableController.showMsg(Alert.AlertType.ERROR,resp);
                     e.printStackTrace();
+                } catch (TicketException e) {
+                    trainTableController.showMsg(Alert.AlertType.INFORMATION,e.getMessage());
+                    Thread.currentThread().interrupt();
                 }
 
             }
