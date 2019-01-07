@@ -97,6 +97,18 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.internal</groupId>
+            <artifactId>jdbc-stdext</artifactId>
+            <version>2.0</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/lib/rt.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+        </dependency>
     </dependencies>
 
     <build>
