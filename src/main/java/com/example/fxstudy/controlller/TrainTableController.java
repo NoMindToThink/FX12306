@@ -15,6 +15,8 @@ import com.example.fxstudy.gui.PassengerView;
 import com.example.fxstudy.http.TicketInfoContain;
 import com.example.fxstudy.http.TicketServer;
 import com.example.fxstudy.springfx.AbstractFXView;
+import com.example.fxstudy.thread.GrabThread;
+import com.example.fxstudy.thread.MyThreadPool;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created with IDEA
@@ -106,6 +109,8 @@ public class TrainTableController implements Initializable {
     private TextField end;
     @FXML
     private DatePicker datePicker;
+
+    public static ThreadPoolExecutor pool = MyThreadPool.newMyThreadPool();
 
     public static Map<String, Stage> stagerContain = new HashMap<>();
 
@@ -318,41 +323,8 @@ public class TrainTableController implements Initializable {
         String end_code = TicketInfoContain.STATIONS.get(end.getText()).getCode();
         String date = datePicker.getValue().toString();
         String purpose_codes = "ADULT";
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean isGrab = false;
-                while(!isGrab) {
-                    String resp = TicketServer.grabTicket(nps, seats, trains, start_code, end_code, date, purpose_codes);
-                    if (!resp.equals("-1")) {
-                        JSONObject respo = null;
-                        try {
-                            respo = JSON.parseObject(resp);
-                            boolean flag = respo.getJSONObject("data").getString("submitStatus").equals("true");
-                            JSONArray msg = respo.getJSONArray("messages");
-                            if (flag) {
-                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "抢票成功");
-                                alert.showAndWait();
-                                isGrab=true;
-                            } else {
-//                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, respo.getJSONArray("messages").get(0).toString());
-//                        alert.showAndWait();
-                            }
-                        } catch (JSONException e) {
-//                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, resp);
-//                    alert.showAndWait();
-                            e.printStackTrace();
-                        }
+        pool.execute(new GrabThread(nps, seats, trains, start_code, end_code, date, purpose_codes));
 
-                    }
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
 
 
     }
@@ -386,5 +358,9 @@ public class TrainTableController implements Initializable {
                 pnames.add(npc.getText());
         }
         return pnames;
+    }
+
+    public void stopGrab(ActionEvent actionEvent) {
+        pool.shutdownNow();
     }
 }
