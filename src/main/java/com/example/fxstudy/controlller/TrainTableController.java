@@ -110,7 +110,7 @@ public class TrainTableController implements Initializable {
     @FXML
     private DatePicker datePicker;
 
-    public static ThreadPoolExecutor pool = MyThreadPool.newMyThreadPool();
+    public static ThreadPoolExecutor pool = null;
 
     public static Map<String, Stage> stagerContain = new HashMap<>();
 
@@ -312,6 +312,7 @@ public class TrainTableController implements Initializable {
     }
 
     public void grabTicket(ActionEvent actionEvent) throws InterruptedException {
+        pool = MyThreadPool.newMyThreadPool();
         List<String> nps = getPassengers();
         logger.info(nps.toString());
         List<String> seats = getSeatType();
@@ -324,8 +325,6 @@ public class TrainTableController implements Initializable {
         String date = datePicker.getValue().toString();
         String purpose_codes = "ADULT";
         pool.execute(new GrabThread(nps, seats, trains, start_code, end_code, date, purpose_codes));
-
-
 
     }
     public List<String> getPassengers(){
@@ -361,6 +360,7 @@ public class TrainTableController implements Initializable {
     }
 
     public void stopGrab(ActionEvent actionEvent) {
+        logger.info("停止抢票");
         pool.shutdownNow();
     }
 }

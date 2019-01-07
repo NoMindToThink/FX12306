@@ -35,15 +35,11 @@ public class GrabThread extends Thread {
         this.purpose_codes = purpose_codes;
     }
 
-    @Override
-    public void run() {
-        super.run();
-    }
 
     @Override
-    public synchronized void start() {
+    public synchronized void run() {
         boolean isGrab = false;
-        while(!isGrab) {
+        while(!isGrab && !Thread.currentThread().isInterrupted()) {
             String resp = TicketServer.grabTicket(nps, seats, trains, start_code, end_code, date, purpose_codes);
             if (!resp.equals("-1")) {
                 JSONObject respo = null;
@@ -70,6 +66,7 @@ public class GrabThread extends Thread {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
