@@ -209,7 +209,7 @@ public class TicketReqUtil {
         return olsStr;
     }
     public static String getPassengerTicketStr(BookingPassenger bookingPassenger){
-        String str = bookingPassenger.getSeatType()+","+0+","+bookingPassenger.getPassenger_type()+","+bookingPassenger.getPassenger_name()+","+bookingPassenger.getPassenger_id_type_code()+","+bookingPassenger.getPassenger_id_no()+","+bookingPassenger.getMobile_no()+","+"N"+"_";
+        String str = bookingPassenger.getSeatType()+","+0+","+bookingPassenger.getPassenger_type()+","+bookingPassenger.getPassenger_name()+","+bookingPassenger.getPassenger_id_type_code()+","+bookingPassenger.getPassenger_id_no()+","+bookingPassenger.getMobile_no()+","+"N"+","+bookingPassenger.getAllEncStr()+"_";
         return str;
     }
 

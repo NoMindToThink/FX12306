@@ -151,6 +151,7 @@ public class Passengers {
             private String gat_valid_date_start;
             private String gat_valid_date_end;
             private String gat_version;
+            private String allEncStr;
 
             public String getCode() {
                 return code;
@@ -350,6 +351,14 @@ public class Passengers {
 
             public void setGat_version(String gat_version) {
                 this.gat_version = gat_version;
+            }
+
+            public String getAllEncStr() {
+                return allEncStr;
+            }
+
+            public void setAllEncStr(String allEncStr) {
+                this.allEncStr = allEncStr;
             }
 
             @Override

@@ -1,5 +1,7 @@
 package com.example.fxstudy.entity;
 
+import org.omg.CORBA.NO_IMPLEMENT;
+
 import java.util.Objects;
 
 /**
@@ -26,6 +28,7 @@ public class BookingPassenger {
     private String passenger_id_no;
     private String mobile_no;
     private String phone_no;
+    private String allEncStr;
 
     public String getPassenger_type_name() {
         return passenger_type_name;
@@ -123,6 +126,7 @@ public class BookingPassenger {
         this.setPassenger_id_no(normalPassengersBean.getPassenger_id_no());
         this.setPhone_no(normalPassengersBean.getPhone_no());
         this.setMobile_no(normalPassengersBean.getMobile_no());
+        this.setAllEncStr(normalPassengersBean.getAllEncStr());
     }
     public BookingPassenger(Passengers.DataBean.NormalPassengersBean normalPassengersBean,String seatType_name) {
         this(normalPassengersBean);
@@ -148,6 +152,14 @@ public class BookingPassenger {
         return Objects.equals(passenger_id_type_code, that.passenger_id_type_code) &&
                 Objects.equals(passenger_id_type_name, that.passenger_id_type_name) &&
                 Objects.equals(passenger_id_no, that.passenger_id_no);
+    }
+
+    public String getAllEncStr() {
+        return allEncStr;
+    }
+
+    public void setAllEncStr(String allEncStr) {
+        this.allEncStr = allEncStr;
     }
 
     @Override
