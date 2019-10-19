@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.fxstudy.entity.*;
 import com.example.fxstudy.exception.TicketException;
+import com.example.fxstudy.inteceptor.LoginCookieInterceptor;
 import com.example.fxstudy.util.TicketReqUtil;
 import com.example.fxstudy.util.TicketRespUtil;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
@@ -18,15 +20,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import static com.example.fxstudy.http.TicketInfoContain.API_URL;
 
@@ -35,15 +36,31 @@ import static com.example.fxstudy.http.TicketInfoContain.API_URL;
  * @Date: 2018/12/3 22:19
  */
 public class TicketServer {
+    public static CookieManager cookieManager;
     public static TicketApi  api;
     public static Retrofit retrofit;
     public static OkHttpClient okHttpClient;
+    public static Map<String,List<String>> GLOBAL_STORAGE = new HashMap<String,List<String>>();
     public final static Logger logger = LoggerFactory.getLogger(TicketServer.class);
     static{
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request request = chain.request()
+                        .newBuilder()
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
+                        .addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
+//                        .addHeader("Accept-Encoding", "gzip, deflate")
+                        .addHeader("Accept-Language", "zh-CN,zh;q=0.9")
+                        .build();
+                return chain.proceed(request);
+            }
+        });
         //设置Cookie持久化
         setCookies(builder);
-        okHttpClient=builder.build();
+        builder.addInterceptor(new LoginCookieInterceptor());
+        java.net.Proxy proxy = new Proxy(Proxy.Type.HTTP,  new InetSocketAddress("127.0.0.1", 8888));
+        okHttpClient=builder.proxy(proxy).build();
         /*设置OKHTTP客户端
         *设置基础API_URL
         * 设置常规转换类
@@ -64,6 +81,7 @@ public class TicketServer {
      */
     private static void setCookies(OkHttpClient.Builder builder) {
         CookieManager cookieManager = new CookieManager();
+        TicketServer.cookieManager = cookieManager;
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         builder.cookieJar(new JavaNetCookieJar(cookieManager));
     }
@@ -86,8 +104,12 @@ public class TicketServer {
         JSONObject jsonObject1 = TicketRespUtil.getJSONObjectFromBody(resp1.body());
         checkRespCode(jsonObject1,"4");
         //验证通过再登陆
+        ArrayList<String> refs = new ArrayList<>();
+        refs.add("https://kyfw.12306.cn/otn/resources/login.html");
+        TicketServer.GLOBAL_STORAGE.put("Referer",refs);
         Map<String, String> req2 = TicketReqUtil.getLoginReq(username, password, ans);
         logger.info("login req:" + req2);
+        String req2Str = TicketReqUtil.convertMapToStringUrlParam(req2);
         Call<String> call2 = api.login(req2);
         Response<String> resp2 = call2.execute();
         logger.info("login resp:" + resp2.body());
@@ -310,5 +332,45 @@ public class TicketServer {
         }else {
             return true;
         }
+    }
+
+    public static void initLoginCookie() {
+        try {
+//          获取一个验证的cookie 2019-10-19
+            Map<String,String> req  = new HashMap<>();
+            Call<String> call = api.getInitCookie(req);
+            Response<String> resp = null;
+            resp = call.execute();
+            logger.info("get InitCookie:"+resp.body());
+            JSONObject jsonObject1 = TicketRespUtil.getJSONObjectFromBody(resp.body(),TicketRespUtil.JSON_PRO_REGEX);
+            ArrayList<String> cookie = (ArrayList<String>) TicketServer.GLOBAL_STORAGE.getOrDefault("Set-Cookie", new ArrayList<String>() {});
+//        cookie.add("RAIL_DEVICEID="+jsonObject1.get("dfp")+";path=/");
+//        cookie.add("RAIL_EXPIRATION="+jsonObject1.get("exp")+";path=/");
+            cookie.add("RAIL_DEVICEID="+"fxHMMvZm_kFndZtrTpP84wj8ZgiDd7Y9wpP-cJZu74YqCyJy1ZY4PaPdxas3lVGjTJPORuW_-jCQo09BJqF13Zj_120oPqyCbtTiSpn4A1L1ncdaqMjen0TG10te4Ql8ZSBnAf29nbjZ-tc0BBSnj6KzMh-lV3h3"+";path=/");
+            cookie.add("RAIL_EXPIRATION="+"1571757202336"+";path=/");
+            TicketServer.GLOBAL_STORAGE.put("Set-Cookie",cookie);
+            cookieManager.put(call.request().url().uri(),TicketServer.GLOBAL_STORAGE);
+//            map.put("RAIL_DEVICEID",jsonObject1.get("exp"));
+//            map.put("RAIL_EXPIRATION",jsonObject1.get("dfp"));
+            Map<String,String> req1 = TicketReqUtil.getUamtkReq();
+            Call<String> call1 = api.getQr64(req1);
+            Response<String> resp1 = call1.execute();
+            JSONObject json1 = TicketRespUtil.getJSONObjectFromBody(resp1.body());
+            TicketInfoContain.setQr64UUID(json1.getString("uuid"));
+
+            Map<String,String> req2 = new HashMap<>();
+            req2.put("uuid",TicketInfoContain.getQr64UUID());
+            req2.put("appid","otn");
+            Call<String> call2 = api.checkQr(req2);
+            Response<String> resp2 = call2.execute();
+            JSONObject json2 = TicketRespUtil.getJSONObjectFromBody(resp2.body());
+            System.out.println(json2.toString());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

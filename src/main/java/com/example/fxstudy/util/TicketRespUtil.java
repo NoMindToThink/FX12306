@@ -28,6 +28,8 @@ public class TicketRespUtil {
     public final static Pattern JSON_PATTERN = Pattern.compile(JSON_REGEX);
     public final static String PRE_JSON_REGEX = ".*(?=\\()";
     public final static Pattern PRE_JSON_PATTERN = Pattern.compile(PRE_JSON_REGEX);
+    public final static String JSON_PRO_REGEX = "(?<=\\(\\').*(?=\\'\\))";
+    public final static Pattern JSON_PRO_PATTERN = Pattern.compile(JSON_PRO_REGEX);
     public final static BASE64Decoder BASE_64_DECODER = new BASE64Decoder();
     public static Logger logger = LoggerFactory.getLogger(TicketRespUtil.class);
 
@@ -37,9 +39,27 @@ public class TicketRespUtil {
         return jsonObject;
     }
 
+    public static JSONObject getJSONObjectFromBody(String body,String reg){
+        String jsonStr = getJSONStrFromBody(body,reg);
+        JSONObject jsonObject = JSON.parseObject(jsonStr);
+        return jsonObject;
+    }
+
     public static String getJSONStrFromBody(String response){
         String result = "";
         Matcher matcher = JSON_PATTERN.matcher(response);
+        while(matcher.find()){
+            result=matcher.group();
+        }
+        if (isNull(result)){
+            result=response;
+        }
+        return result;
+    }
+    public static String getJSONStrFromBody(String response,String reg){
+        Pattern json_pattern = Pattern.compile(reg);
+        String result = "";
+        Matcher matcher = json_pattern.matcher(response);
         while(matcher.find()){
             result=matcher.group();
         }

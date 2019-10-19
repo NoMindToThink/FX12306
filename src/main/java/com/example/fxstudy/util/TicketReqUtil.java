@@ -5,6 +5,7 @@ import com.example.fxstudy.entity.BookingPassenger;
 import com.example.fxstudy.entity.QueryLeftNewDTO;
 import com.example.fxstudy.exception.TicketException;
 import com.example.fxstudy.http.TicketInfoContain;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,5 +234,19 @@ public class TicketReqUtil {
         req.put("_json_att","");
         req.put("REPEAT_SUBMIT_TOKEN",TicketInfoContain.getRepeatSubmitToken());
         return req;
+    }
+
+    public static String convertMapToStringUrlParam(Map<String,String> req){
+        List<String> entrys = new ArrayList<>();
+        for(String k:req.keySet()){
+            String kv = null;
+            try {
+                kv = URLEncoder.encode(k,"utf8")+"=" + URLEncoder.encode(req.get(k),"utf8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            entrys.add(kv);
+        }
+        return Strings.join(entrys, '&');
     }
 }

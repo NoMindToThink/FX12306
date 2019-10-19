@@ -41,6 +41,8 @@ public class TicketInfoContain {
     public static QueryLeftNewDTO queryLeftNewDTO;
     public static Passengers passengers;
 
+    public static String qr64UUID;
+
 
 
     /**
@@ -180,6 +182,14 @@ public class TicketInfoContain {
 
     public static void setCLeftTicketUrl(String CLeftTicketUrl) {
         TicketInfoContain.CLeftTicketUrl = CLeftTicketUrl;
+    }
+
+    public static String getQr64UUID() {
+        return qr64UUID;
+    }
+
+    public static void setQr64UUID(String qr64UUID) {
+        TicketInfoContain.qr64UUID = qr64UUID;
     }
 
     public static void initSeatType() {

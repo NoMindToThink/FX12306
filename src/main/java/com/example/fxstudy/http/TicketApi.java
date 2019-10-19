@@ -1,10 +1,7 @@
 package com.example.fxstudy.http;
 
 import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.QueryMap;
-import retrofit2.http.Url;
+import retrofit2.http.*;
 
 import java.util.Map;
 
@@ -15,12 +12,34 @@ import java.util.Map;
 public interface TicketApi {
 
     /**
+     *  初始化cookie 不然无法登陆
+     * @Param req 其实不需要
+     */
+    @GET("/otn/HttpZF/logdevice")
+    Call<String> getInitCookie(@QueryMap Map<String,String> req);
+
+
+    /**
+     * 获取qr64验证码
+     * @param req appid=otn
+     * @return
+     */
+    @POST("/passport/web/create-qr64")
+    @FormUrlEncoded
+    Call<String> getQr64(@FieldMap Map<String,String> req);
+
+    @POST("/passport/web/checkqr")
+    @FormUrlEncoded
+    Call<String> checkQr(@FieldMap Map<String,String> req);
+
+    /**
      * 获取验证码
      * @param req
      * @return
      */
     @GET("/passport/captcha/captcha-image64")
     public Call<String> getCaptcja(@QueryMap Map<String,String> req);
+
 
     /**
      * 验证验证码答案
@@ -36,7 +55,9 @@ public interface TicketApi {
      * @return
      */
     @POST("/passport/web/login")
-    public Call<String> login(@QueryMap Map<String,String> req);
+    @FormUrlEncoded
+//    @Headers("Content-Type:application/x-www-form-urlencoded; charset=UTF-8")
+    Call<String> login(@FieldMap Map<String, String> map);
 
 
 

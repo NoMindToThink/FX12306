@@ -172,6 +172,8 @@ public class TrainTableController implements Initializable {
         TicketInfoContain.initStation();
         //载入座位类型
         TicketInfoContain.initSeatType();
+
+        TicketServer.initLoginCookie();
         showSeatType();
         logger.info("地名已成功初始化"+TicketInfoContain.STATIONS.size()+"条记录！");
         try {
